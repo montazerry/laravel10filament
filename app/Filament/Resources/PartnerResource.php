@@ -4,44 +4,46 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Section;
+use App\Models\Partner;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\SectionResource\Pages;
+use App\Filament\Resources\PartnerResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\PartnerResource\RelationManagers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 
-class SectionResource extends Resource
+class PartnerResource extends Resource
 {
-    protected static ?string $model = Section::class;
+    protected static ?string $model = Partner::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-bookmark-alt';
+    protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Card::make()->schema([
-                    Forms\Components\TextInput::make('title')
-                        ->required()
-                        ->maxLength(255),
-                    Forms\Components\FileUpload::make('thumbnail')
-                        ->required()->image()->disk('public'),
-                    Forms\Components\RichEditor::make('content')
-                        ->required(),
-                    Forms\Components\Select::make('post_as')->options([
-                        'JUMBOTRON' => 'JUMBOTRON',
-                        'ABOUT' => 'ABOUT'
-                    ])
-                ])
-            ]);
+        ->schema([
+            Card::make()->schema([
+                Forms\Components\TextInput::make('title')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\FileUpload::make('thumbnail')
+                    ->required()->image()->disk('public'),
+                Forms\Components\RichEditor::make('content')
+                    ->required(),
+                Forms\Components\TextInput::make('link')
+                    ->required()
+                    ->maxLength(255),    
+            ])
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -50,7 +52,7 @@ class SectionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')->sortable()->searchable(),
                 Tables\Columns\ImageColumn::make('thumbnail'),
-                Tables\Columns\TextColumn::make('post_as')->searchable(),
+                Tables\Columns\TextColumn::make('link')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
             ])
@@ -83,9 +85,9 @@ class SectionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSections::route('/'),
-            'create' => Pages\CreateSection::route('/create'),
-            'edit' => Pages\EditSection::route('/{record}/edit'),
+            'index' => Pages\ListPartners::route('/'),
+            'create' => Pages\CreatePartner::route('/create'),
+            'edit' => Pages\EditPartner::route('/{record}/edit'),
         ];
     }    
 }
