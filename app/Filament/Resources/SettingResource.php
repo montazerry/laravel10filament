@@ -17,6 +17,7 @@ class SettingResource extends Resource
 {
     protected static ?string $model = Setting::class;
 
+    // mengubah icon di halamn admin setting icon di heroicon.com
     protected static ?string $navigationIcon = 'heroicon-o-cog';
 
     public static function form(Form $form): Form
@@ -39,6 +40,7 @@ class SettingResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->form(function(Setting $record){
+                    // melakukan edit data dengan setting case type textx yang berbeda
                     switch ($record->type) {
                         case 'text':
                             return [Forms\Components\TextInput::make('value')->label($record->label)];
